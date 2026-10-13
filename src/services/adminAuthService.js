@@ -11,15 +11,38 @@ export const adminLogin = async (credentials) => {
   localStorage.setItem("adminToken", token);
   localStorage.setItem("admin", JSON.stringify(admin));
 
+  // Dispatch custom event to notify other UI components
+  window.dispatchEvent(new Event("adminProfileUpdated"));
+
   return response.data;
 };
 
 export const adminLogout = () => {
   localStorage.removeItem("adminToken");
   localStorage.removeItem("admin");
+  window.dispatchEvent(new Event("adminProfileUpdated"));
 };
 
 export const getAdminProfile = async () => {
   const response = await api.get("/admin/auth/profile");
-  return response.data.admin;
+  const admin = response.data.admin;
+
+  if (admin) {
+    localStorage.setItem("admin", JSON.stringify(admin));
+    window.dispatchEvent(new Event("adminProfileUpdated"));
+  }
+
+  return admin;
+};
+
+export const updateAdminProfile = async (data) => {
+  const response = await api.put("/admin/auth/profile", data);
+  const admin = response.data.admin;
+
+  if (admin) {
+    localStorage.setItem("admin", JSON.stringify(admin));
+    window.dispatchEvent(new Event("adminProfileUpdated"));
+  }
+
+  return response.data;
 };

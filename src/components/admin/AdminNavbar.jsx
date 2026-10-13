@@ -1,13 +1,31 @@
+import { useState, useEffect } from "react";
 import { Bell, Menu, Search, Sparkles } from "lucide-react";
 
 export default function AdminNavbar({ onMenuClick }) {
-  let admin = {};
+  const [admin, setAdmin] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("admin") || "{}");
+    } catch {
+      return {};
+    }
+  });
 
-  try {
-    admin = JSON.parse(localStorage.getItem("admin") || "{}");
-  } catch {
-    admin = {};
-  }
+  useEffect(() => {
+    const handleUpdate = () => {
+      try {
+        setAdmin(JSON.parse(localStorage.getItem("admin") || "{}"));
+      } catch {
+        setAdmin({});
+      }
+    };
+
+    window.addEventListener("adminProfileUpdated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("adminProfileUpdated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
 
   return (
     <header className="admin-navbar">

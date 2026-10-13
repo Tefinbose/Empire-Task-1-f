@@ -7,6 +7,9 @@ import Products from "./pages/admin/Products";
 import AddProduct from "./pages/admin/AddProduct";
 import EditProduct from "./pages/admin/EditProduct";
 import Orders from "./pages/admin/Orders";
+import Customers from "./pages/admin/Customers";
+import Analytics from "./pages/admin/Analytics";
+import Settings from "./pages/admin/Settings";
 import PlaceholderPage from "./pages/admin/PlaceholderPage";
 
 function AdminGuard({ children }) {
@@ -66,29 +69,22 @@ export default function App() {
           }
         />
 
-        {/* New Shopify Navigation Routes (UI Ready) */}
+        {/* Shopify Customer Management (Fully Connected) */}
         <Route
           path="/admin/customers"
           element={
             <AdminGuard>
-              <PlaceholderPage
-                title="Customers"
-                description="Manage customer segments, profiles, and order histories"
-                icon={Users}
-              />
+              <Customers />
             </AdminGuard>
           }
         />
 
+        {/* Shopify Real-Time Analytics & Reports (Fully Connected) */}
         <Route
           path="/admin/analytics"
           element={
             <AdminGuard>
-              <PlaceholderPage
-                title="Analytics & Reports"
-                description="Deep-dive into sales metrics, conversion rates, and gross margins"
-                icon={BarChart3}
-              />
+              <Analytics />
             </AdminGuard>
           }
         />
@@ -119,15 +115,12 @@ export default function App() {
           }
         />
 
+        {/* Shopify Store Settings & Merchant Profile (Fully Connected) */}
         <Route
           path="/admin/settings"
           element={
             <AdminGuard>
-              <PlaceholderPage
-                title="Store Settings"
-                description="Configure store details, currencies, taxes, shipping, and permissions"
-                icon={SettingsIcon}
-              />
+              <Settings />
             </AdminGuard>
           }
         />

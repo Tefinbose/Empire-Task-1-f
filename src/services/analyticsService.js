@@ -1,9 +1,15 @@
-
 import api from "./api";
 
 async function getDashboardStats() {
   const response = await api.get("/dashboard/stats");
   return response.data.data;
+}
+
+async function getAnalyticsData(range = "30d") {
+  const response = await api.get("/dashboard/analytics", {
+    params: { range },
+  });
+  return response.data;
 }
 
 async function getRecentOrders() {
@@ -24,4 +30,9 @@ async function updateOrderStatus(id, status) {
   return response.data;
 }
 
-export { getDashboardStats, getRecentOrders, updateOrderStatus };
+export {
+  getDashboardStats,
+  getAnalyticsData,
+  getRecentOrders,
+  updateOrderStatus,
+};

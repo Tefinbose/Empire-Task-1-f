@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -44,12 +45,30 @@ const navGroups = [
 export default function Sidebar({ isOpen = false, onClose }) {
   const navigate = useNavigate();
 
-  let admin = {};
-  try {
-    admin = JSON.parse(localStorage.getItem("admin") || "{}");
-  } catch {
-    admin = {};
-  }
+  const [admin, setAdmin] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("admin") || "{}");
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      try {
+        setAdmin(JSON.parse(localStorage.getItem("admin") || "{}"));
+      } catch {
+        setAdmin({});
+      }
+    };
+
+    window.addEventListener("adminProfileUpdated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("adminProfileUpdated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
 
   const handleLogout = () => {
     adminLogout();
