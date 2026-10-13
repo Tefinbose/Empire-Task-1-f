@@ -2778,5 +2778,114 @@ a {
   }
 }
 
+/* ==========================================================================
+   DISCOUNTS & PROMOTIONS PAGE STYLES
+   ========================================================================== */
+
+.coupon-code-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coupon-code-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  color: #0f172a;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  width: fit-content;
+}
+
+.copy-coupon-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  color: var(--text-muted);
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  width: fit-content;
+}
+
+.copy-coupon-btn:hover {
+  color: var(--text-main);
+  background: #f1f5f9;
+}
+
+.text-emerald {
+  color: var(--emerald);
+}
+
+.coupon-desc-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.benefit-value-tag {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.condition-pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: #f8fafc;
+  border: 1px solid var(--border-card);
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.validity-meta-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.discount-modal-card {
+  max-width: 580px;
+}
+
+.discount-form-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.generate-code-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-subtle);
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.generate-code-btn:hover {
+  background: #e0e7ff;
+}
+
+
 
 

@@ -9,6 +9,7 @@ import EditProduct from "./pages/admin/EditProduct";
 import Orders from "./pages/admin/Orders";
 import Customers from "./pages/admin/Customers";
 import Analytics from "./pages/admin/Analytics";
+import Discounts from "./pages/admin/Discounts";
 import Settings from "./pages/admin/Settings";
 import PlaceholderPage from "./pages/admin/PlaceholderPage";
 
@@ -102,15 +103,12 @@ export default function App() {
           }
         />
 
+        {/* Shopify Discounts & Coupons Management (Fully Connected) */}
         <Route
           path="/admin/discounts"
           element={
             <AdminGuard>
-              <PlaceholderPage
-                title="Discounts & Coupons"
-                description="Create percentage discounts, promo codes, and minimum cart promotions"
-                icon={Tag}
-              />
+              <Discounts />
             </AdminGuard>
           }
         />
