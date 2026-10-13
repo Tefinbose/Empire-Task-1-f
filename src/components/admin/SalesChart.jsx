@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -8,40 +8,62 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, Calendar } from "lucide-react";
+import { TrendingUp, Calendar, Loader2 } from "lucide-react";
+import { getAnalyticsData } from "../../services/analyticsService";
 
-const datasets = {
-  "7D": [
-    { label: "Mon", sales: 14500, orders: 12 },
-    { label: "Tue", sales: 22800, orders: 19 },
-    { label: "Wed", sales: 18200, orders: 15 },
-    { label: "Thu", sales: 31400, orders: 26 },
-    { label: "Fri", sales: 27900, orders: 22 },
-    { label: "Sat", sales: 42100, orders: 35 },
-    { label: "Sun", sales: 38600, orders: 31 },
-  ],
-  "30D": [
-    { label: "Wk 1", sales: 94000, orders: 84 },
-    { label: "Wk 2", sales: 128000, orders: 110 },
-    { label: "Wk 3", sales: 116000, orders: 98 },
-    { label: "Wk 4", sales: 165000, orders: 142 },
-  ],
-};
+function formatDateKey(d) {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function buildTimeline(activePeriod, salesOverTime = []) {
+  const days = activePeriod === "7D" ? 7 : 30;
+  const result = [];
+  const salesMap = new Map();
+
+  salesOverTime.forEach((item) => {
+    if (item.date) {
+      salesMap.set(item.date, item);
+    }
+  });
+
+  const now = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const dateStr = formatDateKey(d);
+    const match = salesMap.get(dateStr);
+
+    const label = d.toLocaleDateString("en-IN", {
+      month: "short",
+      day: "numeric",
+    });
+
+    result.push({
+      date: dateStr,
+      label,
+      sales: match ? match.sales : 0,
+      orders: match ? match.orders : 0,
+    });
+  }
+
+  return result;
+}
 
 function CustomTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
       <div className="chart-custom-tooltip">
-        <p className="tooltip-label">{label}</p>
+        <p className="tooltip-label">{label || data.date}</p>
         <p className="tooltip-value">
           ₹{Number(data.sales || 0).toLocaleString("en-IN")}
         </p>
-        {data.orders && (
-          <span className="tooltip-sub">
-            {data.orders} completed orders
-          </span>
-        )}
+        <span className="tooltip-sub">
+          {data.orders || 0} {data.orders === 1 ? "order" : "orders"} on this day
+        </span>
       </div>
     );
   }
@@ -50,9 +72,43 @@ function CustomTooltip({ active, payload, label }) {
 
 export default function SalesChart() {
   const [activePeriod, setActivePeriod] = useState("7D");
-  const chartData = datasets[activePeriod] || datasets["7D"];
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const currentTotal = chartData.reduce((acc, curr) => acc + curr.sales, 0);
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchChartData() {
+      setLoading(true);
+      try {
+        const rangeParam = activePeriod === "7D" ? "7d" : "30d";
+        const response = await getAnalyticsData(rangeParam);
+        if (isMounted) {
+          setAnalytics(response);
+        }
+      } catch (err) {
+        console.error("Failed to fetch live sales chart data:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    fetchChartData();
+    return () => {
+      isMounted = false;
+    };
+  }, [activePeriod]);
+
+  const chartData = useMemo(() => {
+    const salesOverTime = analytics?.salesOverTime || [];
+    return buildTimeline(activePeriod, salesOverTime);
+  }, [activePeriod, analytics]);
+
+  const currentTotal = useMemo(() => {
+    if (analytics?.kpis?.grossSales !== undefined) {
+      return analytics.kpis.grossSales;
+    }
+    return chartData.reduce((acc, curr) => acc + curr.sales, 0);
+  }, [analytics, chartData]);
 
   return (
     <section className="admin-panel sales-panel">
@@ -62,7 +118,7 @@ export default function SalesChart() {
             <h3>Sales & Revenue Analytics</h3>
             <span className="live-pill-sm">
               <TrendingUp size={12} />
-              +18.2% Growth
+              Live Orders
             </span>
           </div>
           <p>Gross revenue volume across online checkout</p>
@@ -76,6 +132,7 @@ export default function SalesChart() {
                 type="button"
                 className={`period-tab-btn ${activePeriod === period ? "active" : ""}`}
                 onClick={() => setActivePeriod(period)}
+                disabled={loading}
               >
                 {period}
               </button>
@@ -88,7 +145,14 @@ export default function SalesChart() {
         <div className="chart-metric-item">
           <span className="metric-label">Period Gross Sales</span>
           <h4 className="metric-value">
-            ₹{currentTotal.toLocaleString("en-IN")}
+            {loading ? (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <Loader2 size={16} className="spin" />
+                <span>Updating...</span>
+              </span>
+            ) : (
+              `₹${Number(currentTotal || 0).toLocaleString("en-IN")}`
+            )}
           </h4>
         </div>
         <div className="chart-metric-item">
@@ -115,6 +179,7 @@ export default function SalesChart() {
               dataKey="label"
               axisLine={false}
               tickLine={false}
+              interval={activePeriod === "30D" ? "preserveStartEnd" : 0}
               tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
               dy={8}
             />

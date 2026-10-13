@@ -9,6 +9,7 @@ import EditProduct from "./pages/admin/EditProduct";
 import Orders from "./pages/admin/Orders";
 import Customers from "./pages/admin/Customers";
 import Analytics from "./pages/admin/Analytics";
+import Marketing from "./pages/admin/Marketing";
 import Discounts from "./pages/admin/Discounts";
 import Settings from "./pages/admin/Settings";
 import PlaceholderPage from "./pages/admin/PlaceholderPage";
@@ -90,15 +91,12 @@ export default function App() {
           }
         />
 
+        {/* Shopify Marketing & Campaigns (Fully Connected) */}
         <Route
           path="/admin/marketing"
           element={
             <AdminGuard>
-              <PlaceholderPage
-                title="Marketing & Campaigns"
-                description="Manage automated email flows, ad tracking, and promotional outreach"
-                icon={Megaphone}
-              />
+              <Marketing />
             </AdminGuard>
           }
         />
