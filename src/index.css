@@ -1,0 +1,50 @@
+
+@import "tailwindcss";
+@import "./App.css";
+
+:root {
+  font-family: var(--font-sans, "Plus Jakarta Sans", "Inter", sans-serif);
+  color: var(--text-main, #0f172a);
+  background: var(--bg-canvas, #f8fafc);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
