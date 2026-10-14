@@ -21,7 +21,13 @@ export async function getCurrentStore() {
  */
 export async function createStore(storeData) {
   const response = await api.post("/stores", storeData);
-  return response.data?.data;
+  const data = response.data?.data;
+  if (data?._id) {
+    localStorage.setItem("currentStoreId", data._id);
+    localStorage.setItem("currentStoreName", data.name);
+    window.dispatchEvent(new CustomEvent("storeChanged", { detail: data }));
+  }
+  return data;
 }
 
 /**
@@ -29,7 +35,12 @@ export async function createStore(storeData) {
  */
 export async function updateCurrentStore(settingsData) {
   const response = await api.put("/stores/current", settingsData);
-  return response.data?.data;
+  const data = response.data?.data;
+  if (data?._id) {
+    localStorage.setItem("currentStoreName", data.name);
+    window.dispatchEvent(new CustomEvent("storeUpdated", { detail: data }));
+  }
+  return data;
 }
 
 /**
@@ -50,5 +61,15 @@ export async function switchStore(storeId) {
  */
 export async function deleteStore(storeId) {
   const response = await api.delete(`/stores/${storeId}`);
+  const activeId = localStorage.getItem("currentStoreId");
+  if (activeId === storeId) {
+    if (response.data?.newCurrentStoreId) {
+      localStorage.setItem("currentStoreId", response.data.newCurrentStoreId);
+    } else {
+      localStorage.removeItem("currentStoreId");
+      localStorage.removeItem("currentStoreName");
+    }
+    window.dispatchEvent(new CustomEvent("storeChanged", { detail: null }));
+  }
   return response.data;
 }

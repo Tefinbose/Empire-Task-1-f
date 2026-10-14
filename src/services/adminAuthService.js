@@ -11,6 +11,10 @@ export const adminLogin = async (credentials) => {
   localStorage.setItem("adminToken", token);
   localStorage.setItem("admin", JSON.stringify(admin));
 
+  if (admin.currentStore) {
+    localStorage.setItem("currentStoreId", admin.currentStore);
+  }
+
   // Dispatch custom event to notify other UI components
   window.dispatchEvent(new Event("adminProfileUpdated"));
 
@@ -20,6 +24,9 @@ export const adminLogin = async (credentials) => {
 export const adminLogout = () => {
   localStorage.removeItem("adminToken");
   localStorage.removeItem("admin");
+  localStorage.removeItem("currentStoreId");
+  localStorage.removeItem("currentStoreName");
+  localStorage.removeItem("storeSettings");
   window.dispatchEvent(new Event("adminProfileUpdated"));
 };
 

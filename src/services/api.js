@@ -21,4 +21,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Auto-handle token expiry / 401 unauthorized
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      typeof window !== "undefined" &&
+      !window.location.pathname.includes("/login")
+    ) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("admin");
+      window.location.href = "/admin/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

@@ -270,7 +270,7 @@ export default function Stores() {
                   >
                     <div className="store-card-header">
                       <div className="store-avatar-circle">
-                        {store.name.charAt(0).toUpperCase()}
+                        {(store.name || "Store").charAt(0).toUpperCase()}
                       </div>
                       <div className="store-card-info">
                         <div className="store-card-title-row">

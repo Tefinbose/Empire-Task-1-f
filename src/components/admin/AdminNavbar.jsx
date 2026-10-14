@@ -233,7 +233,7 @@ export default function AdminNavbar({ onMenuClick }) {
                         disabled={isSwitching}
                       >
                         <div className="store-item-avatar">
-                          {s.name.charAt(0).toUpperCase()}
+                          {(s.name || "Store").charAt(0).toUpperCase()}
                         </div>
                         <div className="store-item-details">
                           <strong className="store-item-name">{s.name}</strong>
