@@ -23,6 +23,10 @@ import {
   updateAdminProfile,
   adminLogout,
 } from "../../services/adminAuthService";
+import {
+  getCurrentStore,
+  updateCurrentStore,
+} from "../../services/storeService";
 
 const initialStoreSettings = {
   storeName: "Empire Main Store",
@@ -89,7 +93,33 @@ export default function Settings() {
       }
     }
 
+    async function fetchStoreSettings() {
+      try {
+        const store = await getCurrentStore();
+        if (store) {
+          setStoreSettings({
+            storeName: store.name || "",
+            contactEmail: store.contactEmail || "",
+            supportPhone: store.supportPhone || "",
+            currency: store.currency || "INR",
+            currencySymbol: store.currencySymbol || "₹",
+            timezone: store.timezone || "Asia/Kolkata (IST)",
+            shippingFee: store.shippingFee ?? 50,
+            freeShippingThreshold: store.freeShippingThreshold ?? 500,
+            taxRate: store.taxRate ?? 18,
+            emailNotifications: store.emailNotifications ?? true,
+            stockAlerts: store.stockAlerts ?? true,
+          });
+          localStorage.setItem("currentStoreId", store._id);
+          localStorage.setItem("currentStoreName", store.name);
+        }
+      } catch (err) {
+        console.error("Failed to load store settings from server:", err);
+      }
+    }
+
     fetchProfile();
+    fetchStoreSettings();
   }, [navigate]);
 
   async function handleProfileSubmit(e) {
@@ -136,19 +166,39 @@ export default function Settings() {
     }
   }
 
-  function handleStoreSettingsSubmit(e) {
+  async function handleStoreSettingsSubmit(e) {
     e.preventDefault();
     setSavingSettings(true);
+    setSettingsMessage({ type: "", text: "" });
     try {
+      const updated = await updateCurrentStore({
+        name: storeSettings.storeName,
+        contactEmail: storeSettings.contactEmail,
+        supportPhone: storeSettings.supportPhone,
+        currency: storeSettings.currency,
+        currencySymbol: storeSettings.currencySymbol,
+        timezone: storeSettings.timezone,
+        shippingFee: storeSettings.shippingFee,
+        freeShippingThreshold: storeSettings.freeShippingThreshold,
+        taxRate: storeSettings.taxRate,
+        emailNotifications: storeSettings.emailNotifications,
+        stockAlerts: storeSettings.stockAlerts,
+      });
+
       localStorage.setItem("storeSettings", JSON.stringify(storeSettings));
+      if (updated?._id) {
+        localStorage.setItem("currentStoreName", updated.name);
+        window.dispatchEvent(new CustomEvent("storeUpdated", { detail: updated }));
+      }
+
       setSettingsMessage({
         type: "success",
-        text: "Store preferences and checkout configuration saved successfully.",
+        text: "Store preferences and regional configuration persisted to database successfully.",
       });
     } catch (err) {
       setSettingsMessage({
         type: "error",
-        text: "Failed to persist store settings.",
+        text: err.response?.data?.message || err.message || "Failed to persist store settings.",
       });
     } finally {
       setSavingSettings(false);

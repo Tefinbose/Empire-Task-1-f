@@ -8,11 +8,15 @@ const api = axios.create({
   },
 });
 
-// Attach auth token to every request
+// Attach auth token and active tenant store ID to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("adminToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+  const currentStoreId = localStorage.getItem("currentStoreId");
+  if (currentStoreId) {
+    config.headers["x-store-id"] = currentStoreId;
   }
   return config;
 });

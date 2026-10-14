@@ -12,6 +12,8 @@ import Analytics from "./pages/admin/Analytics";
 import Marketing from "./pages/admin/Marketing";
 import Discounts from "./pages/admin/Discounts";
 import Settings from "./pages/admin/Settings";
+import Stores from "./pages/admin/Stores";
+import Inventory from "./pages/admin/Inventory";
 import PlaceholderPage from "./pages/admin/PlaceholderPage";
 
 function AdminGuard({ children }) {
@@ -71,6 +73,16 @@ export default function App() {
           }
         />
 
+        {/* Inventory Management (Fully Connected) */}
+        <Route
+          path="/admin/inventory"
+          element={
+            <AdminGuard>
+              <Inventory />
+            </AdminGuard>
+          }
+        />
+
         {/* Shopify Customer Management (Fully Connected) */}
         <Route
           path="/admin/customers"
@@ -107,6 +119,16 @@ export default function App() {
           element={
             <AdminGuard>
               <Discounts />
+            </AdminGuard>
+          }
+        />
+
+        {/* Multi-Store & Merchant Management (Fully Connected) */}
+        <Route
+          path="/admin/stores"
+          element={
+            <AdminGuard>
+              <Stores />
             </AdminGuard>
           }
         />

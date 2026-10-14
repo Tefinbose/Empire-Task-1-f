@@ -13,6 +13,7 @@ import {
   Store,
   X,
   ShieldCheck,
+  Warehouse,
 } from "lucide-react";
 import { adminLogout } from "../../services/adminAuthService";
 
@@ -27,6 +28,12 @@ const navGroups = [
     ],
   },
   {
+    title: "INVENTORY",
+    items: [
+      { label: "Inventory", path: "/admin/inventory", Icon: Warehouse },
+    ],
+  },
+  {
     title: "SALES & MARKETING",
     items: [
       { label: "Analytics", path: "/admin/analytics", Icon: BarChart3 },
@@ -37,6 +44,7 @@ const navGroups = [
   {
     title: "SYSTEM",
     items: [
+      { label: "Stores", path: "/admin/stores", Icon: Store },
       { label: "Settings", path: "/admin/settings", Icon: Settings },
     ],
   },
